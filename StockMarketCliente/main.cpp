@@ -8,6 +8,7 @@
 int main() {
     WSADATA wsaData;
     SOCKET s;
+
     sockaddr_in server;
     char recvBuff[512];
 
