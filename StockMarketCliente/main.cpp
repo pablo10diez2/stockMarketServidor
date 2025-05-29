@@ -3,6 +3,8 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
+#pragma comment(lib, "ws2_32.lib")  // Asegura que se enlace con Winsock
+
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 #define BUFFER_SIZE 1024
@@ -41,20 +43,30 @@ int main() {
     std::string userInput;
 
     while (true) {
-        // Recibir del servidor
+        // Recibir datos del servidor
         int bytes = recv(s, buffer, BUFFER_SIZE - 1, 0);
         if (bytes <= 0) {
-            std::cout << "Conexión cerrada por el servidor.\n";
+            std::cout << "\nConexión cerrada por el servidor o error.\n";
             break;
         }
         buffer[bytes] = '\0';
         std::cout << buffer;
 
-        // Leer entrada del usuario
+        // Leer del usuario
+        std::cout << "> ";
         std::getline(std::cin, userInput);
-        if (userInput.empty()) userInput = " ";
-        userInput += "\n";  // Añadir salto de línea si el servidor lo espera
-        send(s, userInput.c_str(), userInput.size(), 0);
+
+        // Permitir salida con "exit" desde el cliente
+        if (userInput == "exit") {
+            std::cout << "Cerrando conexión...\n";
+            break;
+        }
+
+        // Enviar al servidor
+        if (send(s, userInput.c_str(), userInput.size(), 0) == SOCKET_ERROR) {
+            std::cerr << "Error enviando datos: " << WSAGetLastError() << "\n";
+            break;
+        }
     }
 
     closesocket(s);
