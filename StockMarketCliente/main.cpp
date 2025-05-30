@@ -3,8 +3,6 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#pragma comment(lib, "ws2_32.lib")  // Asegura que se enlace con Winsock
-
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 #define BUFFER_SIZE 1024
